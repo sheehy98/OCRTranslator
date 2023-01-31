@@ -20,11 +20,11 @@ public class OCRColumnConverter {
      * @param index the column index to convert to a OCRColumnType
 	 * @return the OCRColumnType which describes the specified column
 	 */
-    public OCRColumnType convert(String top, String middle, String bottom, int index) {
+    public OCRColumn convert(String top, String middle, String bottom, int index) {
         // Treat the end of the OCR input as a column of spaces
         // Each token now ends in spaces rather than either spaces or termination
         if (index == top.length()) {
-            return OCRColumnType.spaces;
+            return OCRColumn.spaces;
         }
         
         // Concat each character in the column to allow for simpler comparison
@@ -37,25 +37,25 @@ public class OCRColumnConverter {
         // Translate column to OCRColumnType
         switch(columnTranspose) {
             case "   ":
-                return OCRColumnType.spaces;
+                return OCRColumn.spaces;
             case "_  ":
-                return OCRColumnType.topX;
+                return OCRColumn.topX;
             case "__ ":
-                return OCRColumnType.topXmidX;
+                return OCRColumn.topXmidX;
             case "___":
-                return OCRColumnType.topXmidXbotX;
+                return OCRColumn.topXmidXbotX;
             case "_ _":
-                return OCRColumnType.topXbotX;
+                return OCRColumn.topXbotX;
             case " _ ":
-                return OCRColumnType.midX;
+                return OCRColumn.midX;
             case " | ":
-                return OCRColumnType.midY;
+                return OCRColumn.midY;
             case " ||":
-                return OCRColumnType.midYbotY;
+                return OCRColumn.midYbotY;
             case "  |":
-                return OCRColumnType.botY;
+                return OCRColumn.botY;
             default:
-                return OCRColumnType.invalid;
+                return OCRColumn.invalid;
         }
     }
 
