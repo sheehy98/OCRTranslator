@@ -16,9 +16,17 @@ public class OCRTokenizer {
     private Map<List<OCRColumn>, String> digitMap;
 
     /**
-	 * Constructor that buils the String->OCRColumn map and the OCRColumns->digit map
+	 * Constructor that builds the String->OCRColumn map and the OCRColumns->digit map
 	 */
     public OCRTokenizer() {
+		initColumnMap();
+		initDigitMap();
+    }
+
+    /**
+	 * Builds the String->OCRColumn map (translates an input column to an OCRColumn)
+	 */
+	private void initColumnMap() {
 		columnMap = new HashMap<String, OCRColumn>();
 		columnMap.put("   ", OCRColumn.spaces);
 		columnMap.put("_  ", OCRColumn.topX);
@@ -29,7 +37,12 @@ public class OCRTokenizer {
 		columnMap.put(" | ", OCRColumn.midY);
 		columnMap.put(" ||", OCRColumn.midYbotY);
 		columnMap.put("  |", OCRColumn.botY);
+	}
 
+    /**
+	 * Builds the OCRColumns->digit map (translates a list of OCRColumns to a digit)
+	 */
+	private void initDigitMap() {
 		digitMap = new HashMap<List<OCRColumn>, String>();
 		digitMap.put(Arrays.asList(), "");
 		digitMap.put(Arrays.asList(OCRColumn.midYbotY, OCRColumn.topXbotX, OCRColumn.midYbotY), "0");
@@ -42,7 +55,7 @@ public class OCRTokenizer {
 		digitMap.put(Arrays.asList(OCRColumn.topX, OCRColumn.midYbotY), "7");
 		digitMap.put(Arrays.asList(OCRColumn.midYbotY, OCRColumn.topXmidXbotX, OCRColumn.midYbotY), "8");
 		digitMap.put(Arrays.asList(OCRColumn.midY, OCRColumn.topXmidX, OCRColumn.midYbotY), "9");
-    }
+	}
 
 	/**
 	 * Builds a list of OCRColumns to describe each column in the next token.
