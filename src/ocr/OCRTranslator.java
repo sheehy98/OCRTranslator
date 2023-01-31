@@ -11,7 +11,7 @@
  *******************************************************************************/
 package ocr;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class has a single method that will translate OCR digits to a string of
@@ -122,125 +122,24 @@ public class OCRTranslator
 	 */
 	private String parse(String top, String middle, String bottom)
 	{
+		OCRTokenizer tokenizer = new OCRTokenizer();
 		String digits = "";
 		
 		int index = 0;
 		while (index < top.length()) {
 			// Get the OCRColumns that describe the next token
-			ArrayList<OCRColumn> columns = tokenize(top, middle, bottom, index);
-			// Convert the OCRColumns into a digit (and a width to properly traverse the strings)
-			digits = digits.concat(checkToken(columns));
-			// 
-			index = index + columns.size();
+			List<OCRColumn> columns = tokenizer.tokenize(top, middle, bottom, index);
+
+			// Convert the OCRColumns into a digit
+			String nextToken = tokenizer.checkToken(columns);
+
+			// Append the next digit to the result
+			digits = digits.concat(nextToken);
+
+			// Move to the column at the beginning of the next token
+			index = index + columns.size() + 1;
 		}
 
 		return digits;
-	}
-
-	/**
-	 * Builds a list of OCRColumns to describe each column in the next token.
-	 * A token is a set of columns that fall between two columns of spaces (includes trailing space)
-	 * @param converter the OCRColumnConverter that will perform the transformation
-	 * @param top the top row of the OCR input
-	 * @param middle the middle row of the OCR input
-	 * @param bottom the third row of the OCR input
-	 * @param index the column where the token of interest begins
-	 * @return an ArrayList of OCRColumns describing the next token
-	 */
-	private ArrayList<OCRColumn> tokenize(String top, String middle, String bottom, int index)
-	{
-		OCRColumnConverter converter = new OCRColumnConverter();
-		ArrayList<OCRColumn> columns = new ArrayList<OCRColumn>();
-
-		// Keep translating columns until a column of spaces is reached
-		// The end of the input is treated as a column of spaces
-		columns.add(converter.convert(top, middle, bottom, index));
-		while (columns.get(columns.size() - 1) != OCRColumn.spaces) {
-			index++;
-			columns.add(converter.convert(top, middle, bottom, index));
-		}
-
-		return columns;
-	}
-
-	/**
-	 * Determines the arabic digit described by a list of OCRColumns
-	 * @param columns an ArrayList of OCRColumns describing a token
-	 * @return a String containing the arabic digit
-	 * @throws an OCRException if the OCRColumns do not correspond to a valid digit
-	 */
-	private String checkToken(ArrayList<OCRColumn> columns)
-	{
-		if (
-			columns.get(0) == OCRColumn.spaces
-		) { return ""; }
-
-		if (
-			columns.get(0) == OCRColumn.midYbotY &&
-			columns.get(1) == OCRColumn.topXbotX &&
-			columns.get(2) == OCRColumn.midYbotY &&
-			columns.get(3) == OCRColumn.spaces
-		) { return "0"; }
-
-		if (
-			columns.get(0) == OCRColumn.midYbotY &&
-			columns.get(1) == OCRColumn.spaces
-		) { return "1"; }
-
-		if (
-			columns.get(0) == OCRColumn.botY &&
-			columns.get(1) == OCRColumn.topXmidXbotX &&
-			columns.get(2) == OCRColumn.midY &&
-			columns.get(3) == OCRColumn.spaces
-		) { return "2"; }
-		
-		if (
-			columns.get(0) == OCRColumn.topXmidXbotX &&
-			columns.get(1) == OCRColumn.midYbotY &&
-			columns.get(2) == OCRColumn.spaces
-		) { return "3"; }
-
-		if (
-			columns.get(0) == OCRColumn.midY &&
-			columns.get(1) == OCRColumn.midX &&
-			columns.get(2) == OCRColumn.midYbotY &&
-			columns.get(3) == OCRColumn.spaces
-		) { return "4"; }
-
-		if (
-			columns.get(0) == OCRColumn.midY &&
-			columns.get(1) == OCRColumn.topXmidXbotX &&
-			columns.get(2) == OCRColumn.botY &&
-			columns.get(3) == OCRColumn.spaces
-		) { return "5"; }
-
-		if (
-			columns.get(0) == OCRColumn.midYbotY &&
-			columns.get(1) == OCRColumn.topXmidXbotX &&
-			columns.get(2) == OCRColumn.botY &&
-			columns.get(3) == OCRColumn.spaces
-		) { return "6"; }
-
-		if (
-			columns.get(0) == OCRColumn.topX &&
-			columns.get(1) == OCRColumn.midYbotY &&
-			columns.get(2) == OCRColumn.spaces
-		) { return "7"; }
-
-		if (
-			columns.get(0) == OCRColumn.midYbotY &&
-			columns.get(1) == OCRColumn.topXmidXbotX &&
-			columns.get(2) == OCRColumn.midYbotY &&
-			columns.get(3) == OCRColumn.spaces
-		) { return "8"; }
-
-		if (
-			columns.get(0) == OCRColumn.midY &&
-			columns.get(1) == OCRColumn.topXmidX &&
-			columns.get(2) == OCRColumn.midYbotY &&
-			columns.get(3) == OCRColumn.spaces
-		) { return "9"; }
-
-		throw new OCRException("invalid OCR digits");
 	}
 }
