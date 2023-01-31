@@ -8,14 +8,16 @@ TDD TODO/Task list
 4. invalid characters in input
 5. input OCR digit 1
 6. input OCR digit 3
-7. input OCR digits 1 3
-8. input OCR digits 3 1
-9. input OCR digits 31 (error)
-10. input OCR digit 0
-11. input OCR digit 2
-11. input OCR digit 4
-11. input OCR digit 5
-11. input OCR digit 6
-11. input OCR digit 7
-11. input OCR digit 8
-11. input OCR digit 9
+7. input invalid OCR digit
+8. input OCR digits 1 3
+9. input OCR digits 3 1
+10. input OCR digits 31 (error)
+11. input OCR digit 0
+12. input OCR digit 2
+13. input OCR digit 4
+14. input OCR digit 5
+15. input OCR digit 6
+16. input OCR digit 7
+17. input OCR digit 8
+18. input OCR digit 9
+19. input OCR digits 0 1 2 3 4 5 6 7 8 9

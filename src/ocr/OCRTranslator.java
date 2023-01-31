@@ -123,10 +123,12 @@ public class OCRTranslator
 	private String parse(String top, String middle, String bottom)
 	{
 		String digits = "";
-		int index = 0;
 		
+		int index = 0;
 		while (index < top.length()) {
+			// Get the OCRColumnTypes that describe the next token
 			ArrayList<OCRColumnType> columns = tokenize(top, middle, bottom, index);
+			// Convert the OCRColumnTypes into a digit (and a width to properly traverse the strings)
 			OCRToken nextToken = checkToken(columns);
 
 			digits = digits.concat(nextToken.digit);
@@ -136,11 +138,22 @@ public class OCRTranslator
 		return digits;
 	}
 
+	/**
+	 * Builds a list of OCRColumnTypes to describe each column in the next token.
+	 * A token is a set of columns that fall between two columns of spaces (includes trailing space)
+	 * @param top the top row of the OCR input
+	 * @param middle the middle row of the OCR input
+	 * @param bottom the third row of the OCR input
+	 * @param index the column where the token of interest begins
+	 * @return an ArrayList of OCRColumnTypes describing the next token
+	 */
 	private ArrayList<OCRColumnType> tokenize(String top, String middle, String bottom, int index)
 	{
 		OCRColumnConverter converter = new OCRColumnConverter();
 		ArrayList<OCRColumnType> columns = new ArrayList<OCRColumnType>();
 
+		// Keep translating columns until a column of spaces is reached
+		// The end of the input is treated as a column of spaces
 		columns.add(converter.convert(top, middle, bottom, index));
 		while (columns.get(columns.size() - 1) != OCRColumnType.spaces) {
 			index++;
@@ -150,94 +163,83 @@ public class OCRTranslator
 		return columns;
 	}
 
+	/**
+	 * Determines the arabic digit described by a list of OCRColumnTypes
+	 * @param columns an ArrayList of OCRColumnTypes describing a token
+	 * @return an OCRToken storing the digit and the number of columns that made up the digit
+	 * @throws an OCRException if the OCRColumnTypes do not correspond to a valid digit
+	 */
 	private OCRToken checkToken(ArrayList<OCRColumnType> columns)
 	{
-		switch (columns.get(0)) {
-			case spaces: 
-				return new OCRToken("", 1);
+		if (
+			columns.get(0) == OCRColumnType.spaces
+		) { return new OCRToken("", columns.size()); }
 
-			case midYbotY:
-				if (columns.get(1) == OCRColumnType.spaces) {
-					return new OCRToken("1", 2);
-				}
-				else if (
-					columns.get(1) == OCRColumnType.topXbotX &&
-					columns.get(2) == OCRColumnType.midYbotY &&
-					columns.get(3) == OCRColumnType.spaces
-				) {
-					return new OCRToken("0", 4);
-				}
-				else if (
-					columns.get(1) == OCRColumnType.topXmidXbotX &&
-					columns.get(2) == OCRColumnType.botY &&
-					columns.get(3) == OCRColumnType.spaces
-				) {
-					return new OCRToken("6", 4);
-				}
-				else if (
-					columns.get(1) == OCRColumnType.topXmidXbotX &&
-					columns.get(2) == OCRColumnType.midYbotY &&
-					columns.get(3) == OCRColumnType.spaces
-				) {
-					return new OCRToken("8", 4);
-				}
-				break;
+		if (
+			columns.get(0) == OCRColumnType.midYbotY &&
+			columns.get(1) == OCRColumnType.topXbotX &&
+			columns.get(2) == OCRColumnType.midYbotY &&
+			columns.get(3) == OCRColumnType.spaces
+		) { return new OCRToken("0", columns.size()); }
 
-			case topXmidXbotX:
-				if (
-					columns.get(1) == OCRColumnType.midYbotY &&
-					columns.get(2) == OCRColumnType.spaces
-				) {
-					return new OCRToken("3", 3);
-				}
-				break;
+		if (
+			columns.get(0) == OCRColumnType.midYbotY &&
+			columns.get(1) == OCRColumnType.spaces
+		) { return new OCRToken("1", columns.size()); }
 
-			case botY: 
-				if (
-					columns.get(1) == OCRColumnType.topXmidXbotX &&
-					columns.get(2) == OCRColumnType.midY &&
-					columns.get(3) == OCRColumnType.spaces
-				) {
-					return new OCRToken("2", 4);
-				}
-				break;
+		if (
+			columns.get(0) == OCRColumnType.botY &&
+			columns.get(1) == OCRColumnType.topXmidXbotX &&
+			columns.get(2) == OCRColumnType.midY &&
+			columns.get(3) == OCRColumnType.spaces
+		) { return new OCRToken("2", columns.size()); }
+		
+		if (
+			columns.get(0) == OCRColumnType.topXmidXbotX &&
+			columns.get(1) == OCRColumnType.midYbotY &&
+			columns.get(2) == OCRColumnType.spaces
+		) { return new OCRToken("3", columns.size()); }
 
-			case midY: 
-				if (
-					columns.get(1) == OCRColumnType.midX &&
-					columns.get(2) == OCRColumnType.midYbotY &&
-					columns.get(3) == OCRColumnType.spaces
-				) {
-					return new OCRToken("4", 4);
-				}
-				else if (
-					columns.get(1) == OCRColumnType.topXmidXbotX &&
-					columns.get(2) == OCRColumnType.botY &&
-					columns.get(3) == OCRColumnType.spaces
-				) {
-					return new OCRToken("5", 4);
-				}
-				else if (
-					columns.get(1) == OCRColumnType.topXmidX &&
-					columns.get(2) == OCRColumnType.midYbotY &&
-					columns.get(3) == OCRColumnType.spaces
-				) {
-					return new OCRToken("9", 4);
-				}
-				break;
+		if (
+			columns.get(0) == OCRColumnType.midY &&
+			columns.get(1) == OCRColumnType.midX &&
+			columns.get(2) == OCRColumnType.midYbotY &&
+			columns.get(3) == OCRColumnType.spaces
+		) { return new OCRToken("4", columns.size()); }
 
-			case topX: 
-				if (
-					columns.get(1) == OCRColumnType.midYbotY &&
-					columns.get(2) == OCRColumnType.spaces
-				) {
-					return new OCRToken("7", 3);
-				}
-				break;
+		if (
+			columns.get(0) == OCRColumnType.midY &&
+			columns.get(1) == OCRColumnType.topXmidXbotX &&
+			columns.get(2) == OCRColumnType.botY &&
+			columns.get(3) == OCRColumnType.spaces
+		) { return new OCRToken("5", columns.size()); }
 
-			default:
-				break;
-		}
+		if (
+			columns.get(0) == OCRColumnType.midYbotY &&
+			columns.get(1) == OCRColumnType.topXmidXbotX &&
+			columns.get(2) == OCRColumnType.botY &&
+			columns.get(3) == OCRColumnType.spaces
+		) { return new OCRToken("6", columns.size()); }
+
+		if (
+			columns.get(0) == OCRColumnType.topX &&
+			columns.get(1) == OCRColumnType.midYbotY &&
+			columns.get(2) == OCRColumnType.spaces
+		) { return new OCRToken("7", columns.size()); }
+
+		if (
+			columns.get(0) == OCRColumnType.midYbotY &&
+			columns.get(1) == OCRColumnType.topXmidXbotX &&
+			columns.get(2) == OCRColumnType.midYbotY &&
+			columns.get(3) == OCRColumnType.spaces
+		) { return new OCRToken("8", columns.size()); }
+
+		if (
+			columns.get(0) == OCRColumnType.midY &&
+			columns.get(1) == OCRColumnType.topXmidX &&
+			columns.get(2) == OCRColumnType.midYbotY &&
+			columns.get(3) == OCRColumnType.spaces
+		) { return new OCRToken("9", columns.size()); }
 
 		throw new OCRException("invalid OCR digits");
 	}

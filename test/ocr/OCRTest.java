@@ -91,6 +91,19 @@ public class OCRTest {
     }
 
     @Test
+    void testInvalidDigit() { 
+        OCRTranslator tester = new OCRTranslator();
+
+        assertThrows(OCRException.class, () -> {
+            tester.translate("___", "   ", "___");
+        });
+
+        assertThrows(OCRException.class, () -> {
+            tester.translate("  ", " ||", " ||");
+        });
+    }
+
+    @Test
     void testOneThree() { 
         OCRTranslator tester = new OCRTranslator();
 
@@ -179,5 +192,22 @@ public class OCRTest {
         OCRTranslator tester = new OCRTranslator();
 
         assertEquals(tester.translate(" _ ", "|_|", "  |"), "9");
+    }
+
+    @Test
+    void testAll() { 
+        OCRTranslator tester = new OCRTranslator();
+
+        assertEquals(tester.translate(
+            " _     _  _       _   _  _   _   _ ",
+            "| | |  _| _| |_| |_  |_   | |_| |_|",
+            "|_| | |_  _|   |  _| |_|  | |_|   |"
+        ), "0123456789");
+
+        assertEquals(tester.translate(
+            "    _      _    _              _      _    _    _   _  ",
+            "   | | |   _|   _|    |_|     |_     |_     |  |_| |_| ",
+            "   |_| |  |_    _|      |      _|    |_|    |  |_|   | "
+        ), "0123456789");
     }
 }

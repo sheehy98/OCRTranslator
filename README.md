@@ -14,7 +14,7 @@ with digits that correspond to the digits the three lines represent.
 There are just three characters used in the input lines: '|', '_', and the blank
 character. The rendering of the ten digits, 0-9, are shown on the following lines.
 
-      _     _  _       _   _  _   _   _
+      _     _  _       _   _  _   _   _ 
      | | |  _| _| |_| |_  |_   | |_| |_|
      |_| | |_  _|   |  _| |_|  | |_|   |
 
