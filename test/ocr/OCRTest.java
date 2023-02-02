@@ -210,4 +210,21 @@ public class OCRTest {
             "   |_| |  |_    _|      |      _|    |_|    |  |_|   | "
         ), "0123456789");
     }
+
+    @Test
+    void testValidAndInvalid() { 
+        OCRTranslator tester = new OCRTranslator();
+
+        assertThrows(OCRException.class, () -> {
+            tester.translate("_  |  ", "_| | |", "_| | |");
+        });
+
+        assertThrows(OCRException.class, () -> {
+            tester.translate(
+                "    _      _    _          _      _    _    _   _  ",
+                "   | | |   _|   _||_|     |_     |_     |  |_| |_| ",
+                "   |_| |  |_    _|  |      _|    |_|    |  |_|   | "
+            );
+        });
+    }
 }

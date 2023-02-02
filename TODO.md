@@ -2,13 +2,13 @@ Name: Mago Sheehy
 
 TDD TODO/Task list
 
-1. null input
+1. null input (error)
 2. empty strings
-3. different input string length
-4. invalid characters in input
+3. different input string length (error)
+4. invalid characters in input (error)
 5. input OCR digit 1
 6. input OCR digit 3
-7. input invalid OCR digit
+7. input invalid OCR digit (error)
 8. input OCR digits 1 3
 9. input OCR digits 3 1
 10. input OCR digits 31 (error)
@@ -21,3 +21,4 @@ TDD TODO/Task list
 17. input OCR digit 8
 18. input OCR digit 9
 19. input OCR digits 0 1 2 3 4 5 6 7 8 9
+20. input mix of valid and invalid OCR digits (error)
