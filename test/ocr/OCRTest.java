@@ -64,7 +64,7 @@ public class OCRTest {
         });
 
         assertThrows(OCRException.class, () -> {
-            tester.translate("    b___", "___", "___");
+            tester.translate("___", "_b_", "___");
         });
     }
 
@@ -95,7 +95,7 @@ public class OCRTest {
         OCRTranslator tester = new OCRTranslator();
 
         assertThrows(OCRException.class, () -> {
-            tester.translate("___", "   ", "___");
+            tester.translate("|||", "|||", "|||");
         });
 
         assertThrows(OCRException.class, () -> {
