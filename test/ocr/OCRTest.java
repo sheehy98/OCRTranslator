@@ -226,5 +226,13 @@ public class OCRTest {
                 "   |_| |  |_    _|  |      _|    |_|    |  |_|   | "
             );
         });
+
+        assertThrows(OCRException.class, () -> {
+            tester.translate(
+                "    _      _    _           _      _    _    _   _  |",
+                "   | | |   _|   _| |_|     |_     |_     |  |_| |_| |",
+                "   |_| |  |_    _|   |      _|    |_|    |  |_|   | |"
+            );
+        });
     }
 }
